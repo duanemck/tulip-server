@@ -16,19 +16,28 @@ export class LunoService implements ICollectionService {
     }
 
     async getBalances(): Promise<Balance[]> {
-        const response = await request.get(URL_BALANCE)
-            .auth(this.config.luno.API_KEY_ID, this.config.luno.API_KEY_SECRET);
+        try {
+            const response = await request.get(URL_BALANCE)
+                .auth(this.config.luno.API_KEY_ID, this.config.luno.API_KEY_SECRET);
 
-        return (JSON.parse(response).balance as LunoBalance[])
-            .map(bal => new Balance('Luno', +bal.balance, bal.asset.toLowerCase(), new Date()));
+            return (JSON.parse(response).balance as LunoBalance[])
+                .map(bal => new Balance('Luno', +bal.balance, bal.asset.toLowerCase(), new Date()));
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
     }
 
     async getTicker(ticker: string): Promise<Ticker> {
-        const response = JSON.parse((await request.get(URL_TICKER + ticker)
-            .auth(this.config.luno.API_KEY_ID, this.config.luno.API_KEY_SECRET))) as LunoTicker;
+        try {
+            const response = JSON.parse((await request.get(URL_TICKER + ticker)
+                .auth(this.config.luno.API_KEY_ID, this.config.luno.API_KEY_SECRET))) as LunoTicker;
 
-        return new Ticker(ticker, +response.last_trade, new Date(response.timestamp));
-
+            return new Ticker(ticker, +response.last_trade, new Date(response.timestamp), 0, 0, +response.rolling_24_hour_volume);
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
     }
 }
 

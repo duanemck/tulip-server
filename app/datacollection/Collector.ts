@@ -7,7 +7,7 @@ import { DataStore } from '../storage/DataStore';
 const INTERVAL: number = 60 * 1000;
 
 export class Collector {
-    private timer;
+    private timer: NodeJS.Timer;
     private balanceCollectors: ICollectionService[];
     private rateCollectors: Map<string, ICollectionService> = new Map();
     private dataStore: DataStore;
@@ -23,30 +23,31 @@ export class Collector {
     }
 
     private async collect() {
-        try {
-            console.log('Collecting data');
-            console.log('\tCollecting balances');
-            this.balanceCollectors.forEach(async collector => {
-                let balances = await collector.getBalances();
+        console.log(`${new Date()} Collecting data`);
+        console.log('\tCollecting balances');
+        this.balanceCollectors.forEach(async collector => {
+            let balances = await collector.getBalances();
+            if (balances) {
                 await this.dataStore.storeBalances(balances);
-            });
+            }
+        });
 
-            console.log('\tCollecting rates');
-            this.rateCollectors.forEach(async (value, key) => {
-                let rate = await this.rateCollectors.get(key).getTicker(key);
+        console.log('\tCollecting rates');
+        this.rateCollectors.forEach(async (value, key) => {
+            let rate = await this.rateCollectors.get(key).getTicker(key);
+
+            if (rate) {
                 await this.dataStore.storeRate(rate);
-            });
-        } catch (error) {
-            console.error(error);
-        }
+            }
+        });
     }
 
     async start() {
-        setInterval(() => this.collect(), INTERVAL);
+        this.timer = setInterval(() => this.collect(), INTERVAL);
         await this.collect();
     }
 
     stop() {
-
+        clearInterval(this.timer);
     }
 }
