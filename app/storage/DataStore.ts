@@ -29,4 +29,36 @@ export class DataStore {
         });
     }
 
+    async getLatestPrice(ticker: string): Promise<Ticker> {
+        let query = this.store.createQuery('Rate');
+        query.filter('pair', ticker);
+        query.order('time', {
+            descending: true
+        })
+        query.limit(1);
+        const result = await this.store.runQuery(query);
+        return (result)[0][0];
+    }
+
+    async getPriceOverPeriod(ticker: string, from: Date, to: Date) {
+        let query = this.store.createQuery('Rate');
+        query.filter('pair', ticker);
+        query.filter('time', '>=', from);
+        query.filter('time', '<=', to);
+        query.order('time');
+        const result = await this.store.runQuery(query);
+        return (result)[0];
+    }
+
+    async getLatestWallets(source: string): Promise<Balance[]> {
+        let query = this.store.createQuery('Balance');
+        query.filter('source', source);
+        query.order('timestamp', {
+            descending: true
+        })
+        query.limit(2);
+        const result = await this.store.runQuery(query);
+        return (result)[0];
+    }
+
 }

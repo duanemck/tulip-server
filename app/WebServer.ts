@@ -4,18 +4,22 @@ import * as http from 'http';
 import * as serveStatic from 'serve-static';
 import * as cors from 'cors';
 
-import { Wallet } from './routes/WalletRoute';
+import { WalletRoutes } from './routes/WalletRoutes';
+import { PricesRoute } from './routes/PricesRoute';
 import { Configuration } from './Configuration';
+import { DataStore } from './storage/DataStore';
 
 const NG_APP_ROUTE = '/app';
 
 export class WebServer {
     private app: express.Application;
     server: http.Server;
+    private dataStore: DataStore;
 
     constructor(private config: Configuration) {
         this.app = express();
         this.server = http.createServer(this.app);
+        this.dataStore = new DataStore(this.config);
     }
 
     start() {
@@ -74,9 +78,8 @@ export class WebServer {
         let router: express.Router;
         router = express.Router();
 
-        let wallets: Wallet = new Wallet();
-
-        router.get('/api/wallets', wallets.index.bind(wallets.index));
+        new WalletRoutes(this.dataStore).configure(router);
+        new PricesRoute(this.dataStore).configure(router);
 
         this.app.use(router);
     }

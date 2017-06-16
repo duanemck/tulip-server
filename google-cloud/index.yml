@@ -1,0 +1,16 @@
+indexes:
+- kind: Rate
+  properties:
+  - name: pair   
+  - name: time
+    direction: desc
+- kind: Rate
+  properties:
+  - name: pair   
+  - name: time
+    direction: asc
+- kind: Balance
+  properties:
+  - name: source
+  - name: timestamp
+    direction: desc

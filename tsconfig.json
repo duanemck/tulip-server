@@ -5,7 +5,7 @@
         "removeComments": true,
         "preserveConstEnums": true,
         "outDir": "./bin",
-        "target" : "es6",
+        "target" : "es2017",
         "sourceMap": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true
