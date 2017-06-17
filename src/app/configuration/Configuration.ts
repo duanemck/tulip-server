@@ -1,7 +1,6 @@
 import * as config from 'config';
-import { IServerConfig } from './IServerConfig';
-import { IApiConfig } from './IApiConfig';
-import {IGoogleCloudConfig} from './IGoogleCloudConfig';
+
+import { IServerConfig, IApiConfig, IGoogleCloudConfig } from '.';
 
 export class Configuration {
     environment: string;

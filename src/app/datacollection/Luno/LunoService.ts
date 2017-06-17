@@ -1,10 +1,11 @@
-import { Configuration } from '../../Configuration';
-import { Balance } from '../Balance';
 import * as request from 'request-promise-native';
+
+import { Configuration } from '../../configuration';
+import { Balance, Ticker } from '../../domain';
+
+import { ICollectionService } from '..';
 import { LunoBalance } from './LunoBalance';
-import { Ticker } from '../Ticker';
 import { LunoTicker } from './LunoTicker';
-import { ICollectionService } from '../ICollectionService';
 
 const URL_TICKER = 'https://api.mybitx.com/api/1/ticker?pair=';
 const URL_BALANCE = 'https://api.mybitx.com/api/1/balance';

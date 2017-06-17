@@ -1,8 +1,9 @@
-import { Configuration } from '../Configuration';
-import { ICollectionService } from './ICollectionService';
+import { Configuration } from '../configuration';
+import { ICollectionService } from '../datacollection';
+import { DataStore } from '../storage';
+
 import { LunoService } from './Luno/LunoService';
 import { BitfinexService } from './Bitfinex/BitfinexService';
-import { DataStore } from '../storage/DataStore';
 
 const INTERVAL: number = 60 * 1000;
 

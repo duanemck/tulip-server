@@ -4,10 +4,9 @@ import * as http from 'http';
 import * as serveStatic from 'serve-static';
 import * as cors from 'cors';
 
-import { WalletRoutes } from './routes/WalletRoutes';
-import { PricesRoute } from './routes/PricesRoute';
-import { Configuration } from './Configuration';
-import { DataStore } from './storage/DataStore';
+import { WalletRoutes, PricesRoute } from './routes';
+import { Configuration } from '../configuration';
+import { DataStore } from '../storage';
 
 const NG_APP_ROUTE = '/app';
 
@@ -69,7 +68,7 @@ export class WebServer {
     private routeToFrontend() {
         let ngApp = this.config.server.frontendLocation
             ? this.config.server.frontendLocation
-            : path.join(__dirname, '../../tulip/dist');
+            : path.join(__dirname, '../../../../tulip/dist');
 
         this.app.use(NG_APP_ROUTE, serveStatic(ngApp));
     }

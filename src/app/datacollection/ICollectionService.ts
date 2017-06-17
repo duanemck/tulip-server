@@ -1,5 +1,4 @@
-import { Balance } from './Balance';
-import { Ticker } from './Ticker';
+import { Balance, Ticker } from '../domain';
 
 export interface ICollectionService {
     getBalances(): Promise<Balance[]>;

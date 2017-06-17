@@ -1,15 +1,16 @@
-import { Configuration } from '../Configuration';
-import { Ticker } from '../datacollection/Ticker';
-import { Balance } from '../datacollection/Balance';
-import * as GoogleDataStore from '@google-cloud/datastore';
 import * as path from 'path';
+
+import * as GoogleDataStore from '@google-cloud/datastore';
+
+import { Configuration } from '../configuration';
+import { Ticker, Balance } from '../domain';
 
 export class DataStore {
     private store;
     constructor(config: Configuration) {
         this.store = GoogleDataStore({
             projectId: config.googleCloud.projectId,
-            keyFilename: path.join(__dirname, '../../', config.googleCloud.keyFile)
+            keyFilename: path.join(__dirname, '../../../', config.googleCloud.keyFile)
         });
     }
 

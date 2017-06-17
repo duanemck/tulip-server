@@ -1,16 +1,16 @@
 {
     "compilerOptions": {
         "module": "commonjs",
+        "moduleResolution": "node",
         "noImplicitAny": false,
         "removeComments": true,
         "preserveConstEnums": true,
         "outDir": "./bin",
-        "target" : "es2017",
+        "target": "es2017",
         "sourceMap": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "baseUrl": "src"        
     },
     "files": [
-        "app/index.ts"        
+        "src/index.ts"
     ]
 }

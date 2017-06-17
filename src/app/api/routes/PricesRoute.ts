@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { DataStore } from '../storage/DataStore';
+
+import { DataStore } from 'app/storage';
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
 

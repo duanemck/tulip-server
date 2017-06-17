@@ -1,6 +1,6 @@
-import { WebServer } from './WebServer';
-import { Configuration } from './Configuration';
-import { Collector } from './datacollection/Collector';
+import { WebServer } from './app/api';
+import { Collector } from './app/datacollection';
+import { Configuration } from './app/configuration';
 
 let config = new Configuration();
 let server = new WebServer(config);

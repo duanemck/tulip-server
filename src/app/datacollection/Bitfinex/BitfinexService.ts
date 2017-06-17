@@ -1,11 +1,12 @@
-import { Configuration } from '../../Configuration';
-import { Balance } from '../Balance';
 import * as request from 'request-promise-native';
-import { BitfinexBalance } from './BitfinexBalance';
-import { Ticker } from '../Ticker';
-import { BitfinexTicker } from './BitfinexTicker';
-import { ICollectionService } from '../ICollectionService';
 import * as crypto from 'crypto';
+
+import { Configuration } from '../../configuration';
+import { Balance, Ticker } from '../../domain';
+
+import { ICollectionService } from '..';
+import { BitfinexBalance } from './BitfinexBalance';
+import { BitfinexTicker } from './BitfinexTicker';
 
 const baseUrl = 'https://api.bitfinex.com';
 const balanceUrl = '/v1/balances';
