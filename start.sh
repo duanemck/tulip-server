@@ -1,5 +1,4 @@
-echo Compiling Typescript
-node_modules/typescript/bin/tsc
+sh build.sh
 echo Starting
 node bin/index
 
