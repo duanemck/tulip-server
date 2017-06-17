@@ -1,2 +1,7 @@
 runtime: nodejs
 env: flex
+
+network:
+  instance_tag: tulip
+  forwarded_ports:
+    - 80/tcp

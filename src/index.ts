@@ -14,12 +14,14 @@ let collector = new Collector(config, walletService, priceService)
 
 process.on('SIGTERM', async () => {
     console.log('Process Terminated');
-    await server.shutdown()
+    await server.shutdown();
+    await collector.stop();
     process.exit(0);
 });
 
 process.on('SIGINT', async () => {
     await server.shutdown()
+    await collector.stop();
     process.exit(0);
 });
 
