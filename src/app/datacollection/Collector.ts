@@ -1,3 +1,4 @@
+import { WalletService, PriceService } from '../services';
 import { Configuration } from '../configuration';
 import { ICollectionService } from '../datacollection';
 import { DataStore } from '../storage';
@@ -11,10 +12,8 @@ export class Collector {
     private timer: NodeJS.Timer;
     private balanceCollectors: ICollectionService[];
     private rateCollectors: Map<string, ICollectionService> = new Map();
-    private dataStore: DataStore;
 
-    constructor(private config: Configuration) {
-        this.dataStore = new DataStore(config);
+    constructor(private config: Configuration, private walletService: WalletService, private priceService: PriceService) {
         let luno = new LunoService(config);
         let bitfinex = new BitfinexService(config);
 
@@ -29,7 +28,7 @@ export class Collector {
         this.balanceCollectors.forEach(async collector => {
             let balances = await collector.getBalances();
             if (balances) {
-                await this.dataStore.storeBalances(balances);
+                await this.walletService.storeBalances(balances);
             }
         });
 
@@ -38,7 +37,7 @@ export class Collector {
             let rate = await this.rateCollectors.get(key).getTicker(key);
 
             if (rate) {
-                await this.dataStore.storeRate(rate);
+                await this.priceService.storePrice(rate);
             }
         });
     }

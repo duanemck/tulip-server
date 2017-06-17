@@ -1,11 +1,12 @@
 import { Request, Response, Router } from 'express';
 
-import { DataStore } from 'app/storage';
+import { DataStore } from '../../storage';
+import { PriceService } from '../../services';
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
 
 export class PricesRoute {
-    constructor(private store: DataStore) {
+    constructor(private priceService: PriceService) {
 
     }
 
@@ -16,14 +17,14 @@ export class PricesRoute {
 
     async latest(req: Request, res: Response) {
         const ticker = req.params.ticker;
-        res.json(await this.store.getLatestPrice(ticker));
+        res.json(await this.priceService.getLatestPrice(ticker));
     }
 
     async range(req: Request, res: Response) {
         const ticker = req.params.ticker;
         const from = new Date(Date.parse(req.query.from));
         const to = new Date(Date.parse(req.query.to));
-        res.json(await this.store.getPriceOverPeriod(ticker, from, to));
+        res.json(await this.priceService.getForTickerOverPeriod(ticker, from, to));
     }
 }
 

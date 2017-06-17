@@ -4,6 +4,7 @@ import * as http from 'http';
 import * as serveStatic from 'serve-static';
 import * as cors from 'cors';
 
+import { WalletService, PriceService } from '../services';
 import { WalletRoutes, PricesRoute } from './routes';
 import { Configuration } from '../configuration';
 import { DataStore } from '../storage';
@@ -12,13 +13,15 @@ const NG_APP_ROUTE = '/app';
 
 export class WebServer {
     private app: express.Application;
-    server: http.Server;
+    private server: http.Server;
     private dataStore: DataStore;
 
-    constructor(private config: Configuration) {
+    constructor(private config: Configuration, private walletService: WalletService, private priceService: PriceService) {
         this.app = express();
         this.server = http.createServer(this.app);
         this.dataStore = new DataStore(this.config);
+        this.walletService = new WalletService(this.dataStore);
+        this.priceService = new PriceService(this.dataStore);
     }
 
     start() {
@@ -77,8 +80,8 @@ export class WebServer {
         let router: express.Router;
         router = express.Router();
 
-        new WalletRoutes(this.dataStore).configure(router);
-        new PricesRoute(this.dataStore).configure(router);
+        new WalletRoutes(this.walletService).configure(router);
+        new PricesRoute(this.priceService).configure(router);
 
         this.app.use(router);
     }

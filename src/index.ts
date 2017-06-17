@@ -1,10 +1,16 @@
+import { DataStore } from './app/storage/';
 import { WebServer } from './app/api';
 import { Collector } from './app/datacollection';
 import { Configuration } from './app/configuration';
+import { PriceService, WalletService } from './app/services';
 
 let config = new Configuration();
-let server = new WebServer(config);
-let collector = new Collector(config)
+let datastore = new DataStore(config);
+let priceService = new PriceService(datastore);
+let walletService = new WalletService(datastore);
+
+let server = new WebServer(config, walletService, priceService);
+let collector = new Collector(config, walletService, priceService)
 
 process.on('SIGTERM', async () => {
     console.log('Process Terminated');
