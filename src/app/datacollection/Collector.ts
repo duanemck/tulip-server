@@ -6,7 +6,7 @@ import { DataStore } from '../storage';
 import { LunoService } from './Luno/LunoService';
 import { BitfinexService } from './Bitfinex/BitfinexService';
 
-const INTERVAL: number = 60 * 1000;
+const INTERVAL: number = 5 * 60 * 1000;
 
 export class Collector {
     private timer: NodeJS.Timer;
