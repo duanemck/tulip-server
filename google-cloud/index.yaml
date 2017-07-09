@@ -14,3 +14,14 @@ indexes:
   - name: source
   - name: timestamp
     direction: desc
+- kind: DailyRate
+  properties:
+  - name: pair
+  - name: date
+  - name: close
+- kind: DailyRate
+  properties:
+  - name: pair
+  - name: date
+
+#gcloud app deploy index.yaml

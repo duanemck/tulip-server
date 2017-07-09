@@ -42,7 +42,7 @@ export class WebServer {
 
     private enableDebugCors() {
         let corsOptions = {
-            origin: 'http://localhost:4000'
+            origin: 'http://localhost:4200'
         };
         this.app.use(cors(corsOptions));
     }
