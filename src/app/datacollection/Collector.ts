@@ -1,7 +1,6 @@
 import { WalletService, PriceService } from '../services';
 import { Configuration } from '../configuration';
 import { ICollectionService } from '../datacollection';
-import { DataStore } from '../storage';
 
 import { LunoService } from './Luno/LunoService';
 import { BitfinexService } from './Bitfinex/BitfinexService';

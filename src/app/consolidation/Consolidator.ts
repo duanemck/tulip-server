@@ -1,9 +1,9 @@
 import { WalletService, PriceService } from '../services';
 import { Configuration } from '../configuration';
 import { ICollectionService } from '../datacollection';
-import { DataStore } from '../storage';
+import { IDataStore } from '../storage';
 import * as moment from 'moment';
-import { DailyRate } from "../domain/index";
+import { DailyRate } from '../domain/index';
 
 
 const INTERVAL: number = 60 * 60 * 1000;
@@ -11,17 +11,17 @@ const INTERVAL: number = 60 * 60 * 1000;
 export class Consolidator {
     private timer: NodeJS.Timer;
 
-    constructor(private config: Configuration, private store: DataStore) {
+    constructor(private config: Configuration, private store: IDataStore) {
 
     }
 
     private async consolidate() {
         console.log(`${new Date()} Consolidating rate data`);
         const tickers = await this.store.getUniqueTickers();
-        tickers.forEach(async ticker => {
-            await this.consolidateForTicker(ticker.pair);
-        });
-        console.log('Done');
+        // tickers.forEach(async ticker => {
+        //     await this.consolidateForTicker(ticker);
+        // });
+        await this.consolidateForTicker('ethbtc');
     }
 
     private async consolidateForTicker(ticker: string) {

@@ -1,6 +1,5 @@
 import { Request, Response, Router } from 'express';
 import * as moment from 'moment';
-import { DataStore } from '../../storage';
 import { PriceService } from '../../services';
 
 let wrap = fn => (...args) => fn(...args).catch(args[2]);
@@ -34,7 +33,10 @@ export class PricesRoute {
         const from = moment(req.query.from).startOf('day').toDate();
         let to = moment(req.query.to).startOf('day').toDate();
         to = to || moment().startOf('day').toDate();
-        let r = await this.priceService.getDailyGraph(ticker, from, to)
+        let r = await this.priceService.getDailyGraph(ticker, from, to);
+        let now = await this.priceService.getLatestPrice(ticker) as any;
+        now.date = moment().toDate();
+        r.push(now);
         res.json(r);
     }
 

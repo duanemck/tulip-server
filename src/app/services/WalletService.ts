@@ -1,15 +1,16 @@
-import { DataStore } from '../storage';
+import { IDataStore } from '../storage';
 import { Balance, BalanceSummary, CurrentState } from '../domain';
 
 
 export class WalletService {
-    constructor(private store: DataStore) {
+    constructor(private store: IDataStore) {
 
     }
 
     async getCurrentWalletBalances(): Promise<Balance[]> {
-        let wallets = await this.store.getLatestWallets('Luno');
-        return wallets.concat(await this.store.getLatestWallets('Bitfinex'));
+        let lunoWallets = (await this.store.getLatestWallets('Luno')) || [];
+        let bitfinexWallets = (await this.store.getLatestWallets('Bitfinex')) || [];
+        return lunoWallets.concat(bitfinexWallets);
     }
 
     async getSummary(): Promise<BalanceSummary> {

@@ -7,19 +7,20 @@ import * as cors from 'cors';
 import { WalletService, PriceService } from '../services';
 import { WalletRoutes, PricesRoute } from './routes';
 import { Configuration } from '../configuration';
-import { DataStore } from '../storage';
+import { IDataStore, MongoDataStore } from '../storage';
 
 const NG_APP_ROUTE = '/app';
 
 export class WebServer {
     private app: express.Application;
     private server: http.Server;
-    private dataStore: DataStore;
+    private dataStore: IDataStore;
 
     constructor(private config: Configuration, private walletService: WalletService, private priceService: PriceService) {
         this.app = express();
         this.server = http.createServer(this.app);
-        this.dataStore = new DataStore(this.config);
+        this.dataStore = new MongoDataStore(this.config);
+        this.dataStore.connect();
         this.walletService = new WalletService(this.dataStore);
         this.priceService = new PriceService(this.dataStore);
     }

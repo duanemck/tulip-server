@@ -1,10 +1,10 @@
 import * as config from 'config';
 
-import { IServerConfig, IApiConfig, IGoogleCloudConfig } from '.';
+import { IServerConfig, IApiConfig, IMongoConfig, IGoogleCloudConfig } from '.';
 
 export class Configuration {
     environment: string;
-    mongo: string;
+    mongo: IMongoConfig;
     server: IServerConfig;
     luno: IApiConfig;
     bitfinex: IApiConfig;
@@ -13,7 +13,7 @@ export class Configuration {
     constructor() {
         this.environment = process.env.NODE_ENV || 'default';
 
-        this.mongo = config.get('mongo');
+        this.mongo = config.get('mongo') as IMongoConfig;
         this.server = config.get('server') as IServerConfig;
         this.bitfinex = config.get('bitfinex') as IApiConfig;
         this.luno = config.get('luno') as IApiConfig;
