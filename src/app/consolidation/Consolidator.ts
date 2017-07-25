@@ -18,10 +18,9 @@ export class Consolidator {
     private async consolidate() {
         console.log(`${new Date()} Consolidating rate data`);
         const tickers = await this.store.getUniqueTickers();
-        // tickers.forEach(async ticker => {
-        //     await this.consolidateForTicker(ticker);
-        // });
-        await this.consolidateForTicker('ethbtc');
+        tickers.forEach(async ticker => {
+            await this.consolidateForTicker(ticker);
+        });
     }
 
     private async consolidateForTicker(ticker: string) {
