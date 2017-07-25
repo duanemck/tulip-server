@@ -18,7 +18,8 @@ export class PricesRoute {
 
     async latest(req: Request, res: Response) {
         const ticker = req.params.ticker;
-        res.json(await this.priceService.getLatestPrice(ticker));
+        let rates = await this.priceService.getLatestPrice(ticker);
+        res.json(rates[0]);
     }
 
     async range(req: Request, res: Response) {
@@ -34,7 +35,7 @@ export class PricesRoute {
         let to = moment(req.query.to).startOf('day').toDate();
         to = to || moment().startOf('day').toDate();
         let r = await this.priceService.getDailyGraph(ticker, from, to);
-        let now = await this.priceService.getLatestPrice(ticker) as any;
+        let now = (await this.priceService.getLatestPrice(ticker))[0] as any;
         now.date = moment().toDate();
         r.push(now);
         res.json(r);

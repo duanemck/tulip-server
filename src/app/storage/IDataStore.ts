@@ -9,8 +9,8 @@ export interface IDataStore {
     storeRate(rate: Ticker): Promise<any>;
     storeDailyRate(rate: DailyRate): Promise<any>;
     getUniqueTickers(): Promise<string[]>;
-    getOldestPrice(ticker: string): Promise<Ticker>;
-    getLatestPrice(ticker: string): Promise<Ticker>;
+    getOldestPrice(ticker: string): Promise<Ticker[]>;
+    getLatestPrice(ticker: string): Promise<Ticker[]>;
     getPriceOverPeriod(ticker: string, from: Date, to: Date): Promise<Ticker[]>;
     getDailyRateOverPeriod(ticker: string, from: Date, to: Date): Promise<DailyRate[]>;
     getDailyRateGraph(ticker: string, from: Date, to: Date): Promise<GraphPoint[]>;
