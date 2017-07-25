@@ -64,11 +64,11 @@ export class MongoDataStore implements IDataStore {
     }
 
     async getOldestPrice(ticker: string): Promise<Ticker> {
-        return this.findOneRate({ 'pair': ticker }, { sort: 'time', limit: 1 });
+        return this.findRates({ 'pair': ticker }, { sort: 'time', limit: 1 })[0];
     }
 
     async getLatestPrice(ticker: string): Promise<Ticker> {
-        return this.findOneRate({ 'pair': ticker }, { sort: '-time', limit: 1 });
+        return this.findRates({ 'pair': ticker }, { sort: '-time', limit: 1 })[0];
     }
 
     async getPriceOverPeriod(ticker: string, from: Date, to: Date): Promise<Ticker[]> {
