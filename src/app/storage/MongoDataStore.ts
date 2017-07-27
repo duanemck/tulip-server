@@ -138,7 +138,7 @@ export class MongoDataStore implements IDataStore {
     async getDailyRate(ticker: string, date: Date): Promise<DailyRate> {
         let query = {
             'pair': ticker,
-            'time': date
+            'date': date
         };
         return this.dailyRatesCollection
             .findOne(query);
