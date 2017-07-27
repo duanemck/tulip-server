@@ -14,12 +14,6 @@ export class MongoDataStore implements IDataStore {
     private dailyRatesCollection: Collection;
     private balancesCollection: Collection;
 
-    private findRates;
-    private findDailyRates;
-    private findBalances;
-    private findOneRate;
-    private findOneDailyRate;
-
     constructor(private config: Configuration) {
 
     }
@@ -36,12 +30,6 @@ export class MongoDataStore implements IDataStore {
                 this.dailyRatesCollection = this.db.collection('dailyRates');
                 this.balancesCollection = this.db.collection('balances');
 
-                this.findBalances = wrapCursor(this.balancesCollection, this.balancesCollection.find);
-                this.findRates = wrapCursor(this.ratesCollection, this.ratesCollection.find);
-                this.findOneRate = wrap(this.ratesCollection, this.ratesCollection.findOne);
-
-                this.findDailyRates = wrapCursor(this.dailyRatesCollection, this.dailyRatesCollection.find);
-                this.findOneDailyRate = wrap(this.dailyRatesCollection, this.dailyRatesCollection.findOne);
                 resolve();
             })
         });
@@ -63,12 +51,20 @@ export class MongoDataStore implements IDataStore {
         return this.ratesCollection.distinct('pair', {});
     }
 
-    async getOldestPrice(ticker: string): Promise<Ticker> {
-        return this.findRates({ 'pair': ticker }, { sort: 'time', limit: 1 });
+    async getOldestPrice(ticker: string): Promise<Ticker[]> {
+        return this.ratesCollection
+            .find({ pair: ticker })
+            .sort({ time: 1 })
+            .limit(1)
+            .toArray();
     }
 
-    async getLatestPrice(ticker: string): Promise<Ticker> {
-        return this.findRates({ 'pair': ticker }, { sort: '-time', limit: 1 });
+    async getLatestPrice(ticker: string): Promise<Ticker[]> {
+        return this.ratesCollection
+            .find({ pair: ticker })
+            .sort({ time: -1 })
+            .limit(1)
+            .toArray();
     }
 
     async getPriceOverPeriod(ticker: string, from: Date, to: Date): Promise<Ticker[]> {
@@ -87,7 +83,10 @@ export class MongoDataStore implements IDataStore {
                 }
             ]
         };
-        return this.findRates(query, { sort: 'time' });
+        return this.ratesCollection
+            .find(query)
+            .sort({ 'time': 1 })
+            .toArray();
     }
 
     async getDailyRateOverPeriod(ticker: string, from: Date, to: Date): Promise<DailyRate[]> {
@@ -106,7 +105,10 @@ export class MongoDataStore implements IDataStore {
                 }
             ]
         };
-        return this.findDailyRates(query, { sort: 'time' });
+        return this.dailyRatesCollection
+            .find(query)
+            .sort({ 'date': 1 })
+            .toArray();
     }
 
     async getDailyRateGraph(ticker: string, from: Date, to: Date): Promise<GraphPoint[]> {
@@ -126,7 +128,10 @@ export class MongoDataStore implements IDataStore {
                 }
             ]
         };
-        return this.findDailyRates(query, { sort: 'date' })
+        return this.dailyRatesCollection
+            .find(query)
+            .sort({ 'date': 1 })
+            .toArray()
             .then(result => result.map(p => new GraphPoint(p.close, p.date)));
     }
 
@@ -135,51 +140,19 @@ export class MongoDataStore implements IDataStore {
             'pair': ticker,
             'time': date
         };
-        return this.findOneDailyRate(query, { sort: 'time' })
+        return this.dailyRatesCollection
+            .findOne(query);
     }
 
     async getLatestWallets(source: string): Promise<Balance[]> {
         let query = {
             'source': source
         };
-        return this.findBalances(query, { sort: '-timestamp', limit: 2 });
-    }
-
-
-
-}
-
-
-function wrap(context, f): () => Promise<any> {
-    return function (...args: any[]) {
-        return new Promise<any>((resolve, reject) => {
-            args.push((err, response) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                resolve(response);
-            });
-            f.apply(context, args);
-        });
+        return this.balancesCollection
+            .find(query)
+            .sort({ 'timestamp': -1 })
+            .limit(2)
+            .toArray();
     }
 }
 
-function wrapCursor(context, f): () => Promise<any> {
-    return function (...args: any[]) {
-        return new Promise<any>((resolve, reject) => {
-            args.push((err, response) => {
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                resolve(response);
-            });
-            f.apply(context, args);
-        })
-            .then(cursor => {
-
-                return cursor.toArray();
-            });
-    }
-}
