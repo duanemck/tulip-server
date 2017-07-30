@@ -6,7 +6,7 @@ import * as promisify from 'es6-promisify';
 import { IDataStore } from './IDataStore';
 import { Configuration } from '../configuration';
 import { Collection, Db, MongoClient, FindOneOptions } from 'mongodb';
-import { Ticker, Balance, DailyRate, GraphPoint } from '../domain';
+import { Ticker, Wallet, DailyRate, GraphPoint } from '../domain';
 
 export class MongoDataStore implements IDataStore {
     private db;
@@ -35,7 +35,7 @@ export class MongoDataStore implements IDataStore {
         });
     }
 
-    async storeBalances(balances: Balance[]) {
+    async storeBalances(balances: Wallet[]) {
         await this.balancesCollection.insertMany(balances);
     }
 
@@ -51,20 +51,22 @@ export class MongoDataStore implements IDataStore {
         return this.ratesCollection.distinct('pair', {});
     }
 
-    async getOldestPrice(ticker: string): Promise<Ticker[]> {
+    async getOldestPrice(ticker: string): Promise<Ticker> {
         return this.ratesCollection
             .find({ pair: ticker })
             .sort({ time: 1 })
             .limit(1)
-            .toArray();
+            .toArray()
+            .then(prices => prices[0]);
     }
 
-    async getLatestPrice(ticker: string): Promise<Ticker[]> {
+    async getLatestPrice(ticker: string): Promise<Ticker> {
         return this.ratesCollection
             .find({ pair: ticker })
             .sort({ time: -1 })
             .limit(1)
-            .toArray();
+            .toArray()
+            .then(prices => prices[0]);
     }
 
     async getPriceOverPeriod(ticker: string, from: Date, to: Date): Promise<Ticker[]> {
@@ -144,7 +146,7 @@ export class MongoDataStore implements IDataStore {
             .findOne(query);
     }
 
-    async getLatestWallets(source: string): Promise<Balance[]> {
+    async getLatestWallets(source: string): Promise<Wallet[]> {
         let query = {
             'source': source
         };

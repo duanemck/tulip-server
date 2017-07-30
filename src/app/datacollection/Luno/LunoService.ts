@@ -1,7 +1,7 @@
 import * as request from 'request-promise-native';
 
 import { Configuration } from '../../configuration';
-import { Balance, Ticker } from '../../domain';
+import { Wallet, Ticker } from '../../domain';
 
 import { ICollectionService } from '..';
 import { LunoBalance } from './LunoBalance';
@@ -16,13 +16,13 @@ export class LunoService implements ICollectionService {
 
     }
 
-    async getBalances(): Promise<Balance[]> {
+    async getBalances(): Promise<Wallet[]> {
         try {
             const response = await request.get(URL_BALANCE)
                 .auth(this.config.luno.API_KEY_ID, this.config.luno.API_KEY_SECRET);
 
             return (JSON.parse(response).balance as LunoBalance[])
-                .map(bal => new Balance('Luno', +bal.balance, bal.asset.toLowerCase(), new Date()));
+                .map(bal => new Wallet('Luno', +bal.balance, bal.asset.toLowerCase(), new Date()));
         } catch (err) {
             console.error(err);
             return null;

@@ -1,6 +1,6 @@
-import { Balance, Ticker } from '../domain';
+import { Wallet, Ticker } from '../domain';
 
 export interface ICollectionService {
-    getBalances(): Promise<Balance[]>;
+    getBalances(): Promise<Wallet[]>;
     getTicker(pair: string): Promise<Ticker>;
 }

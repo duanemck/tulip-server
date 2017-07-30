@@ -1,4 +1,4 @@
-export * from './Balance';
+export * from './Wallet';
 export * from './BalanceSummary';
 export * from './Ticker';
 export * from './CurrentState';

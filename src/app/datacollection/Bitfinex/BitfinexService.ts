@@ -2,7 +2,7 @@ import * as request from 'request-promise-native';
 import * as crypto from 'crypto';
 
 import { Configuration } from '../../configuration';
-import { Balance, Ticker } from '../../domain';
+import { Wallet, Ticker } from '../../domain';
 
 import { ICollectionService } from '..';
 import { BitfinexBalance } from './BitfinexBalance';
@@ -18,7 +18,7 @@ export class BitfinexService implements ICollectionService {
 
     }
 
-    async getBalances(): Promise<Balance[]> {
+    async getBalances(): Promise<Wallet[]> {
         try {
             const nonce = Date.now().toString()
             const completeURL = `${baseUrl}${balanceUrl}`;
@@ -47,7 +47,7 @@ export class BitfinexService implements ICollectionService {
             const response = await request.post(options);
 
             return (JSON.parse(response) as BitfinexBalance[])
-                .map(bal => new Balance('Bitfinex', +bal.amount, bal.currency.toLowerCase(), new Date()));
+                .map(bal => new Wallet('Bitfinex', +bal.amount, bal.currency.toLowerCase(), new Date()));
         } catch (err) {
             console.error(err);
             return null;

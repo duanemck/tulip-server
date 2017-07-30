@@ -4,6 +4,7 @@ import { ICollectionService } from '../datacollection';
 
 import { LunoService } from './Luno/LunoService';
 import { BitfinexService } from './Bitfinex/BitfinexService';
+import { Ticker } from '../domain';
 
 const INTERVAL: number = 5 * 60 * 1000;
 
@@ -32,10 +33,12 @@ export class Collector {
         });
 
         console.log('\tCollecting rates');
+        let rates: Ticker[] = [];
         this.rateCollectors.forEach(async (value, key) => {
             let rate = await this.rateCollectors.get(key).getTicker(key);
 
             if (rate) {
+                rates.push(rate);
                 await this.priceService.storePrice(rate);
             }
         });

@@ -10,7 +10,7 @@ export class WalletRoutes {
     }
     configure(router: Router) {
         router.get('/api/wallets/current', wrap(this.current.bind(this)));
-        // router.get('/api/wallets/summary', wrap(this.summary.bind(this)));
+        router.get('/api/wallets/summary', wrap(this.summary.bind(this)));
     }
 
     async current(req: Request, res: Response) {
@@ -18,8 +18,8 @@ export class WalletRoutes {
         res.json(wallets);
     }
 
-    // async summary(req: Request, res: Response) {
-    //     const summary = await this.walletService.getSummary();
-    //     res.json(summary);
-    // }
+    async summary(req: Request, res: Response) {
+        const summary = await this.walletService.getSummary();
+        res.json(summary);
+    }
 }

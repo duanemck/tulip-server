@@ -24,7 +24,7 @@ export class Consolidator {
     }
 
     private async consolidateForTicker(ticker: string) {
-        const earliestRate = (await this.store.getOldestPrice(ticker))[0];
+        const earliestRate = (await this.store.getOldestPrice(ticker));
         const earliestDate = moment(earliestRate.time).startOf('day');
         const yesterday = moment().add(-1, 'days').startOf('day');
 
