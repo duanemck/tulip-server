@@ -43,7 +43,7 @@ export class PricesRoute {
 
     async intraday(req: Request, res: Response) {
         const ticker = req.params.ticker;
-        let r = await this.priceService.getIntradayGraph(ticker, moment().toDate());
+        let r = await this.priceService.getIntradayGraph(ticker, moment().add(-2, 'hours').toDate());
         res.json(r);
     }
 }
