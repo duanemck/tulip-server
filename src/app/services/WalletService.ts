@@ -5,6 +5,8 @@ import * as moment from 'moment';
 export class WalletSummary {
     totalBTC;
     totalRand;
+    todayChange;
+    todayChangePercent;
     gainLoss;
     gainLossPercent;
     investment;
@@ -71,25 +73,27 @@ export class WalletService {
         wallet.changeTodayPercent = wallet.changeTodayRand / (openingPrice * wallet.baseValue);
 
         let walletInvestment = investments[base] - fees[base];
-        wallet.changeSinceStartRand =   (currentPrice * wallet.baseValue) - walletInvestment;
+        wallet.changeSinceStartRand = (currentPrice * wallet.baseValue) - walletInvestment;
         wallet.changeSinceStartPercent = wallet.changeSinceStartRand / walletInvestment;
 
         return wallet;
     }
 
     async getSummary(): Promise<BalanceSummary> {
-        let btcBalance = (await this.getCurrentWallet('Luno', 'xbt')).baseValue;
-        let ethBalance = (await this.getCurrentWallet('Bitfinex', 'eth')).baseValue;
+        let btcBalance = await this.getWalletPerformance('Luno', 'xbt', ['XBTZAR']);
+        let ethBalance = await this.getWalletPerformance('Bitfinex', 'eth', ['ethbtc', 'XBTZAR']);
 
         let ethbtcRate = (await this.store.getLatestPrice('ethbtc')).price;
         let btczarRate = (await this.store.getLatestPrice('XBTZAR')).price;
         let ethzarRate = ethbtcRate * btczarRate;
 
         let summary = new WalletSummary();
-        summary.totalBTC = btcBalance + (ethBalance * ethbtcRate);
-        summary.totalRand = round(summary.totalBTC * btczarRate);
-        summary.gainLoss = round(summary.totalRand - actualInvestment);
-        summary.gainLossPercent = round(summary.gainLoss / actualInvestment * 100);
+        summary.totalBTC = btcBalance.baseValue + (ethBalance.baseValue * ethbtcRate);
+        summary.totalRand = summary.totalBTC * btczarRate;
+        summary.todayChange = btcBalance.changeTodayRand + ethBalance.changeTodayRand;
+        summary.todayChangePercent = btcBalance.changeTodayPercent + ethBalance.changeTodayPercent;
+        summary.gainLoss = summary.totalRand - actualInvestment;
+        summary.gainLossPercent = summary.gainLoss / actualInvestment;
         summary.investment = investment;
         summary.fees = totalFees;
         return summary;
