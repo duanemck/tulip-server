@@ -1,5 +1,7 @@
 import { Ticker } from '../domain';
 import * as moment from 'moment';
+import * as timezone from 'moment-timezone';
+
 import { IDataStore } from 'app/storage/IDataStore';
 
 export class PriceService {
@@ -24,16 +26,9 @@ export class PriceService {
     }
 
     async getIntradayGraph(ticker: string, date: Date) {
-        const fromDate = moment(date).startOf('day').toDate();
-        const toDate = moment(date).endOf('day').toDate();
+        const fromDate = moment.tz(date, 'Africa/Johannesburg').startOf('day').utc().toDate();
+        const toDate = moment.tz(date, 'Africa/Johannesburg').endOf('day').utc().toDate();
         const allData = await this.store.getPriceOverPeriod(ticker, fromDate, toDate);
-        // let array = [];
-        // for (let i = 0; i < allData.length; i++) {
-        //     if (i % 10 === 0) {
-        //         array.push(allData[i]);
-        //     }
-        // }
-        // return array;
         return allData;
     }
 }
