@@ -1,6 +1,5 @@
 import { Ticker } from '../domain';
-import * as moment from 'moment';
-import * as timezone from 'moment-timezone';
+import * as moment from 'moment-timezone';
 
 import { IDataStore } from 'app/storage/IDataStore';
 
