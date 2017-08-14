@@ -15,22 +15,26 @@ export class WalletSummary {
 
 const investments = {
     xbt: 500,
-    eth: 500
+    eth: 0,
+    btc: 500
 };
 
 const fees = {
     xbt: 45,
-    eth: 0
+    eth: 0,
+    btc: 0
 };
 
-const btcInvestment = investments.xbt;
+const xbtInvestment = investments.xbt;
+const btcInvestment = investments.btc;
 const ethInvestment = investments.eth;
-const investment = btcInvestment + ethInvestment;
+
+const investment = btcInvestment + ethInvestment + xbtInvestment;
 const btcFees = fees.xbt = 45;
 const ethFees = fees.eth = 0;
 const totalFees = btcFees + ethFees;
 
-const actualInvestment = investment - totalFees;
+const actualInvestment = investment; // - totalFees;
 
 function round(amount) {
     return Math.round(amount * 100) / 100;
@@ -50,8 +54,9 @@ export class WalletService {
     async getCurrentWalletBalances(): Promise<Wallet[]> {
         return [
             await this.getWalletPerformance('Luno', 'xbt', ['XBTZAR']),
-            await this.getWalletPerformance('Bitfinex', 'eth', ['ethbtc', 'XBTZAR'])
-        ];
+            await this.getWalletPerformance('Bitfinex', 'eth', ['ethbtc', 'XBTZAR']),
+            await this.getWalletPerformance('Bitfinex', 'btc', ['XBTZAR'])
+        ].filter(wallet => wallet.baseValue > 0);
     }
 
     async getWalletPerformance(source: string, base: string, tickerPairs: string[]): Promise<Wallet> {
@@ -72,7 +77,7 @@ export class WalletService {
         wallet.changeTodayRand = (wallet.baseValue * currentPrice) - (openingPrice * wallet.baseValue);
         wallet.changeTodayPercent = wallet.changeTodayRand / (openingPrice * wallet.baseValue);
 
-        let walletInvestment = investments[base] - fees[base];
+        let walletInvestment = investments[base]; // - fees[base];
         wallet.changeSinceStartRand = (currentPrice * wallet.baseValue) - walletInvestment;
         wallet.changeSinceStartPercent = wallet.changeSinceStartRand / walletInvestment;
 
@@ -80,7 +85,9 @@ export class WalletService {
     }
 
     async getSummary(): Promise<BalanceSummary> {
-        let btcBalance = await this.getWalletPerformance('Luno', 'xbt', ['XBTZAR']);
+        let btcBalanceLuno = await this.getWalletPerformance('Luno', 'xbt', ['XBTZAR']);
+        let btcBalanceBitfinex = await this.getWalletPerformance('Bitfinex', 'btc', ['XBTZAR']);
+
         let ethBalance = await this.getWalletPerformance('Bitfinex', 'eth', ['ethbtc', 'XBTZAR']);
 
         let ethbtcRate = (await this.store.getLatestPrice('ethbtc')).price;
@@ -88,10 +95,11 @@ export class WalletService {
         let ethzarRate = ethbtcRate * btczarRate;
 
         let summary = new WalletSummary();
-        summary.totalBTC = btcBalance.baseValue + (ethBalance.baseValue * ethbtcRate);
+        summary.totalBTC = btcBalanceBitfinex.baseValue + btcBalanceLuno.baseValue + (ethBalance.baseValue * ethbtcRate);
         summary.totalRand = summary.totalBTC * btczarRate;
-        summary.todayChange = btcBalance.changeTodayRand + ethBalance.changeTodayRand;
-        summary.todayChangePercent = btcBalance.changeTodayPercent + ethBalance.changeTodayPercent;
+        summary.todayChange = btcBalanceBitfinex.changeTodayRand + btcBalanceLuno.changeTodayRand + ethBalance.changeTodayRand;
+        summary.todayChangePercent = btcBalanceBitfinex.changeTodayPercent +
+            btcBalanceLuno.changeTodayPercent + ethBalance.changeTodayPercent;
         summary.gainLoss = summary.totalRand - actualInvestment;
         summary.gainLossPercent = summary.gainLoss / actualInvestment;
         summary.investment = investment;
