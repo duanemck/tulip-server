@@ -10,7 +10,9 @@ export class Wallet {
     changeSinceStartRand: number;
     changeSinceStartPercent: number;
 
-    constructor(public source: string, public baseValue: number, public baseCurrency: string, public timestamp: Date) {
+    url: string;
+
+    constructor(public source: string, public baseValue: number, public baseCurrency: string, public timestamp: Date, url = null) {
 
     }
 }

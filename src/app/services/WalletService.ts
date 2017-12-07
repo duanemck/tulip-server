@@ -139,7 +139,7 @@ export class WalletService {
       1
     );
     let openingPrice = openingPrices.reduce(
-      (price, rate) => price * rate?rate.close:0,
+      (price, rate) => price * (rate?rate.close:0),
       1
     );
 
@@ -155,7 +155,7 @@ export class WalletService {
       currentPrice * wallet.baseValue - walletInvestment;
     wallet.changeSinceStartPercent =
       wallet.changeSinceStartRand / walletInvestment;
-
+    wallet.url = 'https://www.blocktrail.com/BTC/address/19fedXKZdPGdUavsCydbvdYZ37NhjLW7A4';
     return wallet;
   }
 
