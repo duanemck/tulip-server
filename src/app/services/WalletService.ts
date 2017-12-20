@@ -59,9 +59,9 @@ export class WalletService {
 
   async getCurrentWalletBalances(): Promise<Wallet[]> {
     let exchangeWallets = [
-      await this.getWalletPerformance("Luno", "xbt", ["XBTZAR"]),
-      await this.getWalletPerformance("Bitfinex", "eth", ["ethbtc", "XBTZAR"]),
-      await this.getWalletPerformance("Bitfinex", "btc", ["XBTZAR"])
+      await this.getWalletPerformance("Luno", "xbt", ["XBTZAR"])
+      //   await this.getWalletPerformance("Bitfinex", "eth", ["ethbtc", "XBTZAR"]),
+      //   await this.getWalletPerformance("Bitfinex", "btc", ["XBTZAR"])
     ].filter(wallet => wallet.baseValue > 0);
     exchangeWallets.push(await this.getOfflineWalletPerformance());
     return exchangeWallets;
@@ -73,6 +73,9 @@ export class WalletService {
     tickerPairs: string[]
   ): Promise<Wallet> {
     let wallet = await this.getCurrentWallet(source, base);
+    if (!wallet) {
+      return new Wallet(source, 0, base, new Date());
+    }
     let currentPrices = await Promise.all(
       tickerPairs.map(async pair => await this.store.getLatestPrice(pair))
     );
