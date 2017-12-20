@@ -1,6 +1,6 @@
-import { IDataStore } from '../storage';
-import { Wallet, BalanceSummary, CurrentState } from '../domain';
-import * as moment from 'moment';
+import { IDataStore } from "../storage";
+import { Wallet, BalanceSummary, CurrentState } from "../domain";
+import * as moment from "moment";
 
 export class WalletSummary {
   totalBTC;
@@ -14,9 +14,9 @@ export class WalletSummary {
 }
 
 const investments = {
-  xbt: 500,
+  xbt: 1000,
   eth: 0,
-  btc: 500
+  btc: 0
 };
 
 const fees = {
@@ -59,9 +59,9 @@ export class WalletService {
 
   async getCurrentWalletBalances(): Promise<Wallet[]> {
     let exchangeWallets = [
-      await this.getWalletPerformance('Luno', 'xbt', ['XBTZAR']),
-      await this.getWalletPerformance('Bitfinex', 'eth', ['ethbtc', 'XBTZAR']),
-      await this.getWalletPerformance('Bitfinex', 'btc', ['XBTZAR'])
+      await this.getWalletPerformance("Luno", "xbt", ["XBTZAR"]),
+      await this.getWalletPerformance("Bitfinex", "eth", ["ethbtc", "XBTZAR"]),
+      await this.getWalletPerformance("Bitfinex", "btc", ["XBTZAR"])
     ].filter(wallet => wallet.baseValue > 0);
     exchangeWallets.push(await this.getOfflineWalletPerformance());
     return exchangeWallets;
@@ -83,8 +83,8 @@ export class WalletService {
           await this.store.getDailyRate(
             pair,
             moment()
-              .add(-1, 'days')
-              .startOf('day')
+              .add(-1, "days")
+              .startOf("day")
               .toDate()
           )
       )
@@ -95,7 +95,7 @@ export class WalletService {
       1
     );
     let openingPrice = openingPrices.reduce(
-      (price, rate) => price * (rate?rate.close:0),
+      (price, rate) => price * (rate ? rate.close : 0),
       1
     );
 
@@ -116,19 +116,19 @@ export class WalletService {
   }
 
   async getOfflineWalletPerformance(): Promise<Wallet> {
-    let wallet = new Wallet('Mycellium', offlineWallet, 'btc', new Date());
+    let wallet = new Wallet("Mycellium", offlineWallet, "btc", new Date());
     let currentPrices = await Promise.all(
-      ['XBTZAR'].map(async pair => await this.store.getLatestPrice(pair))
+      ["XBTZAR"].map(async pair => await this.store.getLatestPrice(pair))
     );
 
     let openingPrices = await Promise.all(
-      ['XBTZAR'].map(
+      ["XBTZAR"].map(
         async pair =>
           await this.store.getDailyRate(
             pair,
             moment()
-              .add(-1, 'days')
-              .startOf('day')
+              .add(-1, "days")
+              .startOf("day")
               .toDate()
           )
       )
@@ -139,7 +139,7 @@ export class WalletService {
       1
     );
     let openingPrice = openingPrices.reduce(
-      (price, rate) => price * (rate?rate.close:0),
+      (price, rate) => price * (rate ? rate.close : 0),
       1
     );
 
@@ -155,29 +155,30 @@ export class WalletService {
       currentPrice * wallet.baseValue - walletInvestment;
     wallet.changeSinceStartPercent =
       wallet.changeSinceStartRand / walletInvestment;
-    wallet.url = 'https://www.blocktrail.com/BTC/address/19fedXKZdPGdUavsCydbvdYZ37NhjLW7A4';
+    wallet.url =
+      "https://www.blocktrail.com/BTC/address/19fedXKZdPGdUavsCydbvdYZ37NhjLW7A4";
     return wallet;
   }
 
   async getSummary(): Promise<BalanceSummary> {
-    let btcBalanceLuno = await this.getWalletPerformance('Luno', 'xbt', [
-      'XBTZAR'
+    let btcBalanceLuno = await this.getWalletPerformance("Luno", "xbt", [
+      "XBTZAR"
     ]);
     let btcBalanceBitfinex = await this.getWalletPerformance(
-      'Bitfinex',
-      'btc',
-      ['XBTZAR']
+      "Bitfinex",
+      "btc",
+      ["XBTZAR"]
     );
 
-    let ethBalance = await this.getWalletPerformance('Bitfinex', 'eth', [
-      'ethbtc',
-      'XBTZAR'
+    let ethBalance = await this.getWalletPerformance("Bitfinex", "eth", [
+      "ethbtc",
+      "XBTZAR"
     ]);
 
     let mycelliumBalance = await this.getOfflineWalletPerformance();
 
-    let ethbtcRate = (await this.store.getLatestPrice('ethbtc')).price;
-    let btczarRate = (await this.store.getLatestPrice('XBTZAR')).price;
+    let ethbtcRate = (await this.store.getLatestPrice("ethbtc")).price;
+    let btczarRate = (await this.store.getLatestPrice("XBTZAR")).price;
     let ethzarRate = ethbtcRate * btczarRate;
 
     let summary = new WalletSummary();
