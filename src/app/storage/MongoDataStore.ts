@@ -14,9 +14,7 @@ export class MongoDataStore implements IDataStore {
     private dailyRatesCollection: Collection;
     private balancesCollection: Collection;
 
-    constructor(private config: Configuration) {
-
-    }
+    constructor(private config: Configuration) {}
 
     async connect() {
         return new Promise((resolve, reject) => {
@@ -31,7 +29,7 @@ export class MongoDataStore implements IDataStore {
                 this.balancesCollection = this.db.collection('balances');
 
                 resolve();
-            })
+            });
         });
     }
 
@@ -71,90 +69,87 @@ export class MongoDataStore implements IDataStore {
 
     async getPriceOverPeriod(ticker: string, from: Date, to: Date): Promise<Ticker[]> {
         let query = {
-            'pair': ticker,
-            '$and': [
+            pair: ticker,
+            $and: [
                 {
-                    'time': {
-                        '$gte': from
-                    }
+                    time: {
+                        $gte: from,
+                    },
                 },
                 {
-                    'time': {
-                        '$lte': to
-                    }
-                }
-            ]
+                    time: {
+                        $lte: to,
+                    },
+                },
+            ],
         };
         return this.ratesCollection
             .find(query)
-            .sort({ 'time': 1 })
+            .sort({ time: 1 })
             .toArray();
     }
 
     async getDailyRateOverPeriod(ticker: string, from: Date, to: Date): Promise<DailyRate[]> {
         let query = {
-            'pair': ticker,
-            '$and': [
+            pair: ticker,
+            $and: [
                 {
-                    'time': {
-                        '$gte': from
-                    }
+                    time: {
+                        $gte: from,
+                    },
                 },
                 {
-                    'time': {
-                        '$lte': to
-                    }
-                }
-            ]
+                    time: {
+                        $lte: to,
+                    },
+                },
+            ],
         };
         return this.dailyRatesCollection
             .find(query)
-            .sort({ 'date': 1 })
+            .sort({ date: 1 })
             .toArray();
     }
 
     async getDailyRateGraph(ticker: string, from: Date, to: Date): Promise<GraphPoint[]> {
-
         let query = {
-            'pair': ticker,
-            '$and': [
+            pair: ticker,
+            $and: [
                 {
-                    'date': {
-                        '$gte': from
-                    }
+                    date: {
+                        $gte: from,
+                    },
                 },
                 {
-                    'date': {
-                        '$lte': to
-                    }
-                }
-            ]
+                    date: {
+                        $lte: to,
+                    },
+                },
+            ],
         };
         return this.dailyRatesCollection
             .find(query)
-            .sort({ 'date': 1 })
+            .sort({ date: 1 })
             .toArray()
             .then(result => result.map(p => new GraphPoint(p.close, p.date)));
     }
 
     async getDailyRate(ticker: string, date: Date): Promise<DailyRate> {
         let query = {
-            'pair': ticker,
-            'date': date
+            pair: ticker,
+            date: date,
         };
-        return this.dailyRatesCollection
-            .findOne(query);
+        return this.dailyRatesCollection.findOne(query);
     }
 
     async getLatestWallets(source: string): Promise<Wallet[]> {
         let query = {
-            'source': source
+            source: source,
         };
         return this.balancesCollection
             .find(query)
-            .sort({ 'timestamp': -1 })
-            .limit(2)
+            .sort({ timestamp: -1 })
+            .limit(4)
             .toArray();
     }
 }
-
