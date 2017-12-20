@@ -19,7 +19,7 @@ export class Collector {
 
         this.balanceCollectors = [luno, bitfinex];
         this.rateCollectors.set('XBTZAR', luno);
-        this.rateCollectors.set('ethbtc', bitfinex);
+        // this.rateCollectors.set('ethbtc', bitfinex);
     }
 
     private async collect() {
